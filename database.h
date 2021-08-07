@@ -22,7 +22,6 @@
 //
 /////////////////////////////////////////////////////////////////////////
 
-#include <sstream>
 #include <cstdlib>
 #include <algorithm>
 #include "sortComparisions.h"
@@ -39,7 +38,8 @@ private:
 		for(int i = 0; i < sz; i++){
 			if(toLowerCase(data[i].get_name()) == toLowerCase(songName) && 
 				toLowerCase(data[i].get_album()) == toLowerCase(album) && 
-				toLowerCase(data[i].get_artist()) == toLowerCase(artist) && data[i].get_year() == year){
+				toLowerCase(data[i].get_artist()) == toLowerCase(artist) && 
+				data[i].get_year() == year){
 				return true;
 			}
 		}
@@ -113,7 +113,7 @@ private:
 	}
 
 public:
-
+	// Empty Default Constructor
 	Database()
 	: sz(0), cap(10), data(new Song[cap])
 	{
@@ -121,41 +121,39 @@ public:
 		srand(time(0));
 	}
 
+	// Read from File Constructor
+	// https://www.cplusplus.com/reference/string/string/getline/
 	Database(const string& fname)
 	: sz(0), cap(10), data(new Song[cap])
 	{
-		string record, songName, album, artist, year;
+		string songName, album, artist, year;
 		int recordField = 0;
 
 		// read from given file name
 		ifstream textFile(fname);
 		if(textFile.is_open()){
-
-			while(getline(textFile, record)){
-				// parse the string 
-				stringstream stream(record); //create string stream from the string
-				recordField = 0;
-				while(stream.good()) {
-					if(recordField == 0){
-						getline(stream, songName, '*'); //get first string delimited by comma 
-					} else if(recordField == 1){
-						getline(stream, album, '*'); //get first string delimited by comma 
-					} else if(recordField == 2){
-						getline(stream, artist, '*'); //get first string delimited by comma 
-					} else if(recordField == 3){
-						getline(stream, year, '*'); //get first string delimited by comma
-					}
-			      
-					recordField++;
-			   	}
+			while(!textFile.eof()){
+				if(recordField == 0){
+					getline(textFile, songName, '*'); //get first string delimited by comma 
+				} else if(recordField == 1){
+					getline(textFile, album, '*'); //get first string delimited by comma 
+				} else if(recordField == 2){
+					getline(textFile, artist, '*'); //get first string delimited by comma 
+				} else if(recordField == 3){
+					getline(textFile, year); //get first string delimited by comma
+				}
+		      
+				recordField++;
 				
-				// create a song element
-				Song song(songName, album, artist, stoi(year));
+				if(recordField == 4){
+					// create a song element
+					Song song(songName, album, artist, stoi(year));
 
-				// add song to data array
-				addData(song);
+					// add song to data array
+					addData(song);
+					recordField = 0;
+				}
 			}
-
 			textFile.close();
 		} else{
 			// file error
@@ -168,6 +166,10 @@ public:
 
 	int size() const{
 		return sz;
+	}
+
+	int capacity() const{
+		return cap;
 	}
 
 	void addData(Song song){
@@ -224,7 +226,6 @@ public:
 		validateNumInput(yearString, 1000, 2021, "year");
 		year = stoi(yearString);
 
-
 		// validate entry
 		if(existInDatabase(songName, album, artist, year)){
 			// don't add to database
@@ -252,7 +253,7 @@ public:
 	void searchExact(const int& findChoice, const bool& deleteRecord){
 		string searchPrompt, searchRequest;
 		int results = 0;
-		// int yearRequest;
+
 		if(findChoice == 1){
 			searchPrompt = "song";
 		} else if(findChoice == 2){
