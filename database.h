@@ -69,16 +69,51 @@ private:
 		}
 	}
 
-	void validateYearInput(int& year){
-		while(cin.fail() || year < 1000 || year > 2021){ // ?????????????????? GET CURRENT YEAR ???????????????????????????????????
-			if(cin.fail()){
-				cin.clear(); // put us back in 'normal' operation mode
-    			cin.ignore(100, '\n');  // clear up to 100 characters out of the buffer, or until a '\n' character is removed
+	void validateYearInput(string& yearString){
+		// while(cin.fail() || year < 1000 || year > 2021){ 
+		// 	if(cin.fail()){
+		// 		cin.clear(); // put us back in 'normal' operation mode
+  //   			cin.ignore(100, '\n');  // clear up to 100 characters out of the buffer, or until a '\n' character is removed
+		// 	}
+		// 	cout << "Invalid release year entered, please try again.\nEnter Year of Release: ";
+		// 	cin >> year;
+		// }
+		if(yearString.length() == 0){
+			yearString = "-1";
+		} else{
+			for(int i = 0; i < yearString.length(); i++){
+				if(!isdigit(yearString[i])){
+					yearString = "-1";
+					break;
+				} 
 			}
-			cout << "Invalid release year entered, please try again.\nEnter Year of Release: ";
-			cin >> year;
 		}
+
+		while(stoi(yearString) < 1000 || stoi(yearString) > 2021) {
+			if(stoi(yearString) < 1000 || stoi(yearString) > 2021){
+				cout << "Invalid release year entered, please try again.\nEnter Year of Release: ";
+				getline(cin, yearString);
+			}
+
+			for(int i = 0; i < yearString.length(); i++){
+				if(!isdigit(yearString[i])){
+					yearString = "-1";
+					break;
+				} 
+			}
+		} 
 	}
+
+	// void validateYearInput(int& year){
+	// 	while(cin.fail() || year < 1000 || year > 2021){ 
+	// 		if(cin.fail()){
+	// 			cin.clear(); // put us back in 'normal' operation mode
+ //    			cin.ignore(100, '\n');  // clear up to 100 characters out of the buffer, or until a '\n' character is removed
+	// 		}
+	// 		cout << "Invalid release year entered, please try again.\nEnter Year of Release: ";
+	// 		cin >> year;
+	// 	}
+	// }
 
 public:
 
@@ -165,7 +200,7 @@ public:
 	}
 
 	void addSong(){
-		string songName, album, artist;
+		string songName, album, artist, yearString;
 		int year;
 
 		cout << "\nAdd Song to Database\n"
@@ -187,9 +222,11 @@ public:
 		validateArtistInput(artist);
 
 		cout << "Enter Year of Release: ";
-		cin >> year;
+		getline(cin, yearString);
+		// cin >> year; 
 		// validate input
-		validateYearInput(year);
+		validateYearInput(yearString);
+		year = stoi(yearString);
 
 
 		// validate entry
@@ -219,7 +256,7 @@ public:
 	void searchExact(const int& findChoice, const bool& deleteRecord){
 		string searchPrompt, searchRequest;
 		int results = 0;
-		int yearRequest;
+		// int yearRequest;
 		if(findChoice == 1){
 			searchPrompt = "song";
 		} else if(findChoice == 2){
@@ -232,11 +269,14 @@ public:
 
 		// !!!!!!! CONVERT YEAR TO GETLINE !!!!!!!!!
 		cout << "Enter your " + searchPrompt + " search request: ";
-		if(findChoice != 4){
-			getline(cin, searchRequest);
-		} else{
-			cin >> yearRequest;
-		}
+		getline(cin, searchRequest);
+
+
+		// if(findChoice != 4){
+		// 	getline(cin, searchRequest);
+		// } else{
+		// 	cin >> yearRequest;
+		// }
 		
 		if(findChoice == 1){
 			validateSongInput(searchRequest);
@@ -278,9 +318,9 @@ public:
 				}
 			}
 		} else if(findChoice == 4){
-			validateYearInput(yearRequest);
+			validateYearInput(searchRequest);
 			for(int i = 0; i < sz; i++){
-				if(data[i].get_year() == yearRequest){
+				if(data[i].get_year() == stoi(searchRequest)){
 					if(results == 0){
 						cout << "\nSearch Results\n"
 							 << "--------------\n";
@@ -290,6 +330,7 @@ public:
 					results++;
 				}
 			}
+			// searchRequest = to_string(yearRequest);
 		}
 
 		if(results == 0){
@@ -328,9 +369,6 @@ public:
 				cin.ignore(1,'\n');
 
 				if(choice == 1){
-					if(findChoice == 4){
-						searchRequest = to_string(yearRequest);
-					}
 					deleteExact(findChoice, searchRequest);
 				}
 			}
@@ -436,17 +474,22 @@ public:
 	}
 
 	void searchRange(const bool& deleteRecord){
+		string yearInput;
 		int yearLow = 1; 
 		int yearHigh = 0;
 		int results = 0;
 		
 		while(yearLow > yearHigh){
 			cout << "Enter the lowest year range: ";
-			cin >> yearLow;
-			validateYearInput(yearLow);
+			getline(cin, yearInput);
+			// cin >> yearLow;
+			validateYearInput(yearInput);
+			yearLow = stoi(yearInput);
 			cout << "Enter the highest year range: ";
-			cin >> yearHigh;
-			validateYearInput(yearHigh);
+			getline(cin, yearInput);
+			// cin >> yearHigh;
+			validateYearInput(yearInput);
+			yearHigh = stoi(yearInput);
 			if(yearLow > yearHigh){
 				cout << "Invalid range. Please input lowest year first.\n";
 			}

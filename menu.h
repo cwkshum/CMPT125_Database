@@ -22,6 +22,8 @@
 //
 /////////////////////////////////////////////////////////////////////////
 
+#include <cctype>
+
 using namespace std;
 
 class Menu{
@@ -29,23 +31,28 @@ private:
 	int menuChoice;
 	int menuState;
 
+	// https://www.cplusplus.com/reference/cctype/isdigit/
 	void promptChoice(const int& min, const int& max){
-		cout << "Please enter the number of your choice: ";
-		cin >> menuChoice;
+		string input;
+		menuChoice = -1;
 
-		// https://www.learncpp.com/cpp-tutorial/stdcin-and-handling-invalid-input/
-		while(cin.fail() || menuChoice < min || menuChoice > max){
-			if(cin.fail()){
-				cin.clear(); // put us back in 'normal' operation mode
-    			cin.ignore(100, '\n');  // clear up to 100 characters out of the buffer, or until a '\n' character is removed
+		while(menuChoice < min || menuChoice > max){
+			cout << "Please enter the number of your choice: ";
+			
+			getline(cin, input);
+			for(int i = 0; i < input.length(); i++){
+				if(!isdigit(input[i])){
+					menuChoice = -1;
+					break;
+				} else if(i == input.length()-1){
+					menuChoice = stoi(input); 
+				}
 			}
-			cout << "Invalid choice.\n" 
-				 << "Please enter the number of your choice: ";
-			cin >> menuChoice;
-		}
 
-		// https://stackoverflow.com/questions/10311382/c-issue-getline-skips-first-input
-		cin.ignore(1,'\n');
+			if(menuChoice < min || menuChoice > max){
+				cout << "Invalid choice.\n"; 
+			} 
+		}
 	}
 
 public: 
