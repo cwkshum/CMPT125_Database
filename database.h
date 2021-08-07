@@ -24,6 +24,8 @@
 
 #include <sstream>
 #include <cstdlib>
+#include <algorithm>
+#include "sortComparisions.h"
 
 using namespace std;
 
@@ -32,15 +34,6 @@ private:
 	int sz;
 	int cap;
 	Song* data;
-
-	string toLowerCase(string originalString) const{
-		for(int i = 0; i < originalString.size(); i++){
-			if(originalString[i] >= 'A' && originalString[i] <= 'Z'){
-				originalString[i] += 32;
-			}
-		}
-		return originalString; 
-	}
 
 	bool existInDatabase(const string& songName, const string& album, const string& artist, const int& year) const{
 		for(int i = 0; i < sz; i++){
@@ -141,6 +134,10 @@ public:
 		srand(time(0));
 	}
 
+	int size() const{
+		return sz;
+	}
+
 	void addData(Song song){
 		if(sz < cap){
 			// increase size and set the right end slot to the new song
@@ -183,7 +180,6 @@ public:
 		getline(cin, album);
 		// validate input
 		validateAlbumInput(album);
-
 
 		cout << "Enter Artist Name: ";
 		getline(cin, artist);
@@ -301,10 +297,11 @@ public:
 		} else{
 			cout << to_string(results);
 			if(results == 1){
-				cout << " result found.\n";
+				cout << " result "; 
 			} else{
-				cout << " results found.\n";
+				cout << " results ";
 			}
+			cout << "found where the " << searchPrompt << " matches " << searchRequest << ".\n";
 
 			if(deleteRecord){
 				int choice;
@@ -401,10 +398,11 @@ public:
 		} else{
 			cout << to_string(results);
 			if(results == 1){
-				cout << " result found.\n";
+				cout << " result "; 
 			} else{
-				cout << " results found.\n";
+				cout << " results ";
 			}
+			cout << "found where the " << searchPrompt << " contains " << searchRequest << ".\n";
 
 			if(deleteRecord){
 				int choice;
@@ -471,10 +469,11 @@ public:
 		} else{
 			cout << to_string(results);
 			if(results == 1){
-				cout << " result found.\n";
+				cout << " result "; 
 			} else{
-				cout << " results found.\n";
+				cout << " results ";
 			}
+			cout << "found where the year is in the range of " << to_string(yearLow) + " to " + to_string(yearHigh) + ".\n";
 
 			if(deleteRecord){
 				int choice;
@@ -587,7 +586,7 @@ public:
 		i--;
 	}
 
-	// https://publish.obsidian.md/cmpt125/notes+on+basic+sorting
+	// https://publish.obsidian.md/cmpt125/The+STL+and+generic+programming
 	void sortRecords(const int& findChoice, const int& order){
 		string recordRequest, orderRequest;
 		Song* sortedData = new Song[cap];
@@ -595,42 +594,38 @@ public:
 			sortedData[i] = data[i];
 		}
 
-		if(findChoice == 1){
-			recordRequest = "song";
-		} else if(findChoice == 2){
-			recordRequest = "album";
-		} else if(findChoice == 3){
-			recordRequest = "artist";
-		} else if(findChoice == 4){
-			recordRequest = "year";
-			if(order == 1){
-				orderRequest = "ascending";
-			} else{
-				orderRequest = "descending";
-			}
-		}
-
 		if(findChoice != 4){
+			if(findChoice == 1){
+				recordRequest = "song";
+				std::sort(sortedData, sortedData + sz, byNameThenAlbum);
+			} else if(findChoice == 2){
+				recordRequest = "album";
+				std::sort(sortedData, sortedData + sz, byAlbumThenName);
+			} else if(findChoice == 3){
+				recordRequest = "artist";
+				std::sort(sortedData, sortedData + sz, byArtistThenName);
+			}
+
 			if(order == 1){
 				orderRequest = "alphabetical";
 			} else{
 				orderRequest = "reverse alphabetical";
+				std::reverse(sortedData, sortedData + sz);
+			}
+		} else if(findChoice == 4){
+			recordRequest = "year";
+			std::sort(sortedData, sortedData + sz, byYearThenName);
+
+			if(order == 1){
+				orderRequest = "ascending";
+			} else{
+				orderRequest = "descending";
+				std::reverse(sortedData, sortedData + sz);
 			}
 		}
-		
-		for(int i = 1; i < sz; ++i) {
-			if(findChoice == 1){
-				sortSong(sortedData, order, i);
-			} else if(findChoice == 2){
-				sortAlbum(sortedData, order, i);
-			} else if(findChoice == 3){
-				sortArtist(sortedData, order, i);
-			} else if(findChoice == 4){
-				sortYear(sortedData, order, i);
-			}
-   		}
 
-   		cout << "\nDatabase Results\n" << "----------------\n";
+   		cout << "\nDatabase Results\n" 
+   			 << "----------------\n";
 		for(int i = 0; i < sz; i++){
 			// print record
 			printRecord(sortedData[i]);
@@ -640,112 +635,6 @@ public:
    			 << " order according to " << recordRequest << "\n";
    		
 		delete[] sortedData;
-	}
-
-	void sortSong(Song*& sortedData, const int& order, int& i){
-		string key = toLowerCase(sortedData[i].get_name());    
-
-		Song temp = sortedData[i];
-
-		int j = i - 1;     
-
-		if(order == 1){
-			while(j >= 0 && toLowerCase(sortedData[j].get_name()) > key) {
-				sortedData[j + 1] = sortedData[j];
-				--j;
-			}
-		} else{
-			while(j >= 0 && toLowerCase(sortedData[j].get_name()) < key) {
-				sortedData[j + 1] = sortedData[j];
-				--j;
-			}
-		}
-
-		sortedData[j + 1] = temp;   
-	}
-
-	void sortAlbum(Song*& sortedData, const int& order, int& i){
-		string key = toLowerCase(sortedData[i].get_album());    
-
-		Song temp = sortedData[i];
-
-		int j = i - 1;     
-
-		if(order == 1){
-			while(j >= 0 && toLowerCase(sortedData[j].get_album()) > key) {
-				sortedData[j + 1] = sortedData[j];
-				--j;
-			}
-		} else{
-			while(j >= 0 && toLowerCase(sortedData[j].get_album()) < key) {
-				sortedData[j + 1] = sortedData[j];
-				--j;
-			}
-		}
-
-		sortedData[j + 1] = temp;   
-	}
-
-	void sortArtist(Song*& sortedData, const int& order, int& i){
-		string key = toLowerCase(sortedData[i].get_artist());    
-
-		Song temp = sortedData[i];
-
-		int j = i - 1;     
-
-		if(order == 1){
-			while(j >= 0 && toLowerCase(sortedData[j].get_artist()) > key) {
-				sortedData[j + 1] = sortedData[j];
-				--j;
-			}
-		} else{
-			while(j >= 0 && toLowerCase(sortedData[j].get_artist()) < key) {
-				sortedData[j + 1] = sortedData[j];
-				--j;
-			}
-		}
-
-		sortedData[j + 1] = temp;   
-	}
-
-	void sortYear(Song*& sortedData, const int& order, int& i){
-		int key = sortedData[i].get_year();    // key is the value we are going to insert
-		                // into the sorted part of v
-
-		Song temp = sortedData[i];
-
-		int j = i - 1;     // j points to one position before the 
-		                // (possible) insertion point of the key;
-		                // thus, key will eventually be inserted at 
-		                // v[j + 1]
-
-		//
-		// This loop determines where to insert the key into the sorted part
-		// of v. It does this by searching backwards through the sorted part
-		// for the first value that is less than, or equal to, key.
-		//
-		// This loop combines searching with element moving. Every time an 
-		// element bigger than the key is found, it is moved up one position.
-		//
-		// It's possible that there is no value in the sorted part that is 
-		// smaller than key, in which case key gets inserted at the very
-		// start of v. This is a special case that is handled by j >= 0 in
-		// the loop condition.
-
-		if(order == 1){
-			while(j >= 0 && sortedData[j].get_year() > key) {
-				sortedData[j + 1] = sortedData[j];
-				--j;
-			}
-		} else{
-			while(j >= 0 && sortedData[j].get_year() < key) {
-				sortedData[j + 1] = sortedData[j];
-				--j;
-			}
-		}
-
-		sortedData[j + 1] = temp;   // j points to the location *before*
-		               // the one where key will be inserted
 	}
 
 	void songRec(const int& choice){
@@ -769,7 +658,6 @@ public:
 
 			// https://stackoverflow.com/questions/10311382/c-issue-getline-skips-first-input
 			cin.ignore(1,'\n');
-
 		} else{
 			// get a random index number
 			numberInput = rand() % sz;
@@ -819,5 +707,4 @@ public:
 		delete[] data;
 		data = nullptr;
 	}
-
 };

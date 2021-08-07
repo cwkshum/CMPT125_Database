@@ -36,6 +36,7 @@ using namespace std;
 
 int main(){
 	Database database("database.txt");
+	// Database database("empty_db.txt");
 	Menu menu;
 
 	while(menu.get_menuChoice() != 6){
@@ -47,59 +48,83 @@ int main(){
 			// display main menu
 			menu.printMainMenu();
 		} else if(menu.get_menuChoice() == 2){
-			// display find song sub menu
-			menu.printFindSongMenu(false);
-			int findChoice = menu.get_menuChoice();
-			while(findChoice != 0){
-				menu.printSearchMenu();
-				if(menu.get_menuChoice() == 1){
-					database.searchExact(findChoice, false);
-				} else{
-					if(menu.get_menuState() == 2){
-						database.searchSubstring(findChoice, false);
-					} else{
-						database.searchRange(false);
-					}
-				}
+			if(database.size() == 0){
+				cout << "\nSorry, the database appears to be empty! "
+					 << "Please add some songs before finding a song in the database.\n";
+				menu.printMainMenu();
+			} else{
 				// display find song sub menu
 				menu.printFindSongMenu(false);
-				findChoice = menu.get_menuChoice();
+				int findChoice = menu.get_menuChoice();
+				while(findChoice != 0){
+					menu.printSearchMenu();
+					if(menu.get_menuChoice() == 1){
+						database.searchExact(findChoice, false);
+					} else{
+						if(menu.get_menuState() == 2){
+							database.searchSubstring(findChoice, false);
+						} else{
+							database.searchRange(false);
+						}
+					}
+					// display find song sub menu
+					menu.printFindSongMenu(false);
+					findChoice = menu.get_menuChoice();
+				}
 			}
 		} else if(menu.get_menuChoice() == 3){
-			// display find song sub menu
-			menu.printFindSongMenu(true);
-			int findChoice = menu.get_menuChoice();
-			while(findChoice != 0){
-				menu.printSearchMenu();
-				if(menu.get_menuChoice() == 1){
-					if(menu.get_menuChoice() == 1){
-						database.searchExact(findChoice, true);
-					}
-				} else{
-					if(menu.get_menuState() == 2){
-						database.searchSubstring(findChoice, true);
-					} else{
-						database.searchRange(true);
-					}
-				}
+			if(database.size() == 0){
+				cout << "\nSorry, the database appears to be empty! "
+					 << "Please add some songs before deleting a song from the database.\n";
+				menu.printMainMenu();
+			} else{
 				// display find song sub menu
 				menu.printFindSongMenu(true);
-				findChoice = menu.get_menuChoice();
+				int findChoice = menu.get_menuChoice();
+				while(findChoice != 0){
+					menu.printSearchMenu();
+					if(menu.get_menuChoice() == 1){
+						if(menu.get_menuChoice() == 1){
+							database.searchExact(findChoice, true);
+						}
+					} else{
+						if(menu.get_menuState() == 2){
+							database.searchSubstring(findChoice, true);
+						} else{
+							database.searchRange(true);
+						}
+					}
+					// display find song sub menu
+					menu.printFindSongMenu(true);
+					findChoice = menu.get_menuChoice();
+				}
 			}
 		} else if(menu.get_menuChoice() == 4){
-			menu.printListMenu();
-			int findChoice = menu.get_menuChoice();
-			while(menu.get_menuChoice() != 0){
-				menu.printOrderMenu();
-				database.sortRecords(findChoice, menu.get_menuChoice());
+			if(database.size() == 0){
+				cout << "\nSorry, the database appears to be empty! "
+					 << "Please add some songs before requesting to list the songs in the database.\n";
+				menu.printMainMenu();
+			} else{
 				menu.printListMenu();
-				findChoice = menu.get_menuChoice();
+				int findChoice = menu.get_menuChoice();
+				while(menu.get_menuChoice() != 0){
+					menu.printOrderMenu();
+					database.sortRecords(findChoice, menu.get_menuChoice());
+					menu.printListMenu();
+					findChoice = menu.get_menuChoice();
+				}
 			}
 		} else if(menu.get_menuChoice() == 5){
-			menu.printRecMenu();
-			while(menu.get_menuChoice() != 0){
-				database.songRec(menu.get_menuChoice());
+			if(database.size() == 0){
+				cout << "\nSorry, the database appears to be empty! "
+					 << "Please add some songs before getting a song recommendation.\n";
+				menu.printMainMenu();
+			} else{
 				menu.printRecMenu();
+				while(menu.get_menuChoice() != 0){
+					database.songRec(menu.get_menuChoice());
+					menu.printRecMenu();
+				}
 			}
 		}
 	}
