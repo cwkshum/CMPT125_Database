@@ -47,7 +47,7 @@ private:
 		return false;
 	}
 
-	void validateSongInput(string& songName){
+	void validateSongInput(string& songName) const{
 		// https://www.cplusplus.com/reference/string/string/find_first_not_of/
 		while(songName.find_first_not_of(" \n\t\r") == string::npos){
 			cout << "Invalid song name entered, please try again.\nEnter Song Name: ";
@@ -55,21 +55,21 @@ private:
 		}
 	}
 
-	void validateAlbumInput(string& album){
+	void validateAlbumInput(string& album) const{
 		while(album.find_first_not_of(" \n\t\r") == string::npos){
 			cout << "Invalid album name entered, please try again.\nEnter Album Name: ";
 			getline(cin, album);
 		}
 	}
 
-	void validateArtistInput(string& artist){
+	void validateArtistInput(string& artist) const{
 		while(artist.find_first_not_of(" \n\t\r") == string::npos){
 			cout << "Invalid artist name entered, please try again.\nEnter Artist Name: ";
 			getline(cin, artist);
 		}
 	}
 
-	void validateNumInput(string& input, const int& min, const int& max, const string& errorMsg){
+	void validateNumInput(string& input, const int& min, const int& max, const string& errorMsg) const{
 		if(input.length() == 0){
 			input = "-1";
 		} else{
@@ -111,7 +111,6 @@ private:
 			}
 		} 
 	}
-
 public:
 	// Empty Default Constructor
 	Database()
@@ -165,11 +164,23 @@ public:
 	}
 
 	int size() const{
+		// return size of database
 		return sz;
 	}
 
 	int capacity() const{
+		// return capacity of database
 		return cap;
+	}
+
+	Song get_song(const int& i) const{
+		if(i < 0 || i > sz-1){
+			// invalid index
+			cout << "The requested index location is outside the bounds of the array.\n";
+		}
+
+		// return song at requested index
+		return data[i];
 	}
 
 	void addData(Song song){
@@ -332,24 +343,8 @@ public:
 			}
 			cout << "found where the " << searchPrompt << " matches " << searchRequest << ".\n";
 
-			if(deleteRecord){
-				string choice;
-				cout << "\nDo you want to delete ";
-				if(results == 1){
-					cout << "this result ";
-				} else{
-					cout << "all " + to_string(results) + " results ";
-				}
-				cout << "from the database?\n"
-					 << "1. Yes\n"
-					 << "2. No\n"
-					 << "Please enter the number of your choice: ";
-				getline(cin, choice);
-				validateNumInput(choice, 1, 2, "choice");
-
-				if(stoi(choice) == 1){
-					deleteExact(findChoice, searchRequest);
-				}
+			if(deleteRecord && deleteResults(results)){
+				deleteExact(findChoice, searchRequest);
 			}
 		}
 	}
@@ -421,24 +416,8 @@ public:
 			}
 			cout << "found where the " << searchPrompt << " contains " << searchRequest << ".\n";
 
-			if(deleteRecord){
-				string choice;
-				cout << "\nDo you want to delete ";
-				if(results == 1){
-					cout << "this result ";
-				} else{
-					cout << "all " + to_string(results) + " results ";
-				}
-				cout << "from the database?\n"
-					 << "1. Yes\n"
-					 << "2. No\n"
-					 << "Please enter the number of your choice: ";
-				getline(cin, choice);
-				validateNumInput(choice, 1, 2, "choice");
-
-				if(stoi(choice) == 1){
-					deleteSubstring(findChoice, searchRequest);
-				}
+			if(deleteRecord && deleteResults(results)){
+				deleteSubstring(findChoice, searchRequest);
 			}
 		}
 	}
@@ -483,26 +462,30 @@ public:
 			}
 			cout << "found where the year is in the range of " << to_string(yearLow) + " to " + to_string(yearHigh) + ".\n";
 
-			if(deleteRecord){
-				string choice;
-				cout << "\nDo you want to delete ";
-				if(results == 1){
-					cout << "this result ";
-				} else{
-					cout << "all " + to_string(results) + " results ";
-				}
-				cout << "from the database?\n"
-					 << "1. Yes\n"
-					 << "2. No\n"
-					 << "Please enter the number of your choice: ";
-				getline(cin, choice);
-				validateNumInput(choice, 1, 2, "choice");
-
-				if(stoi(choice) == 1){
-					deleteRange(yearLow, yearHigh);
-				}
+			if(deleteRecord && deleteResults(results)){
+				deleteRange(yearLow, yearHigh);
 			}
 		}
+	}
+
+	bool deleteResults(const int& results) const{
+		string choice;
+		cout << "\nDo you want to delete ";
+		if(results == 1){
+			cout << "this result ";
+		} else{
+			cout << "all " + to_string(results) + " results ";
+		}
+		cout << "from the database?\n"
+			 << "1: Yes\n"
+			 << "2: No\n"
+			 << "Please enter the number of your choice: ";
+		getline(cin, choice);
+		validateNumInput(choice, 1, 2, "choice");
+		if(stoi(choice) == 1){
+			return true;
+		}
+		return false;
 	}
 
 	void deleteExact(const int& findChoice, const string& searchRequest){
@@ -530,7 +513,7 @@ public:
 			}
 		}
 
-		cout << "All records of " + searchRequest + " has been successfully removed from the database!\n";
+		cout << "\nAll records of " + searchRequest + " has been successfully removed from the database!\n";
 	}
 
 	void deleteSubstring(const int& findChoice, const string& searchRequest){
@@ -586,7 +569,7 @@ public:
 	}
 
 	// https://publish.obsidian.md/cmpt125/The+STL+and+generic+programming
-	void sortRecords(const int& findChoice, const int& order){
+	void sortRecords(const int& findChoice, const int& order) const{
 		string recordRequest, orderRequest;
 		Song* sortedData = new Song[cap];
 		for(int i = 0; i < sz; i++){
@@ -636,7 +619,7 @@ public:
 		delete[] sortedData;
 	}
 
-	void songRec(const int& choice){
+	void songRec(const int& choice) const{
 		int numberInput;
 
 		if(choice == 1){
@@ -655,16 +638,6 @@ public:
 		printRecord(get_song(numberInput));
 	}
 
-	Song get_song(const int& i) const{
-		if(i < 0 || i > sz-1){
-			// invalid index
-			cout << "The requested index location is outside the bounds of the array.\n";
-		}
-
-		// return song at requested index
-		return data[i];
-	}
-
 	// https://www.cplusplus.com/doc/tutorial/files/
 	void saveToFile(const string& fname) const{
 		// write to file from given file name
@@ -674,7 +647,7 @@ public:
 			for(int i = 0; i < sz; i++){
 				textFile << data[i].get_name() << "*" 
 						 << data[i].get_album() << "*"  
-						 << data[i].get_artist() + "*" 
+						 << data[i].get_artist() << "*" 
 						 << to_string(data[i].get_year());
 				if(i != sz-1){
 					textFile << "\n";
