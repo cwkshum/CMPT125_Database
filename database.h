@@ -69,51 +69,48 @@ private:
 		}
 	}
 
-	void validateYearInput(string& yearString){
-		// while(cin.fail() || year < 1000 || year > 2021){ 
-		// 	if(cin.fail()){
-		// 		cin.clear(); // put us back in 'normal' operation mode
-  //   			cin.ignore(100, '\n');  // clear up to 100 characters out of the buffer, or until a '\n' character is removed
-		// 	}
-		// 	cout << "Invalid release year entered, please try again.\nEnter Year of Release: ";
-		// 	cin >> year;
-		// }
-		if(yearString.length() == 0){
-			yearString = "-1";
+	void validateNumInput(string& input, const int& min, const int& max, const string& errorMsg){
+		if(input.length() == 0){
+			input = "-1";
 		} else{
-			for(int i = 0; i < yearString.length(); i++){
-				if(!isdigit(yearString[i])){
-					yearString = "-1";
+			for(int i = 0; i < input.length(); i++){
+				if(!isdigit(input[i])){
+					input = "-1";
 					break;
 				} 
 			}
 		}
 
-		while(stoi(yearString) < 1000 || stoi(yearString) > 2021) {
-			if(stoi(yearString) < 1000 || stoi(yearString) > 2021){
+		while(stoi(input) < min || stoi(input) > max) {
+			if(errorMsg == "year"){
 				cout << "Invalid release year entered, please try again.\nEnter Year of Release: ";
-				getline(cin, yearString);
+			} else if(errorMsg == "choice"){
+				cout << "Invalid choice.\n" 
+					 << "Please enter the number of your choice: ";
+			} else if(errorMsg == "rec"){
+				cout << "Invalid choice.\n" 
+					 << "Enter a number from " << min << " to " << max << ": ";
+			} else if(errorMsg == "yearLow"){
+				cout << "Invalid release year entered, please try again.\nEnter the lowest year range: ";
+			} else if(errorMsg == "yearHigh"){
+				cout << "Invalid release year entered. Please ensure that the year is "
+					 << to_string(min) << " or higher and try again.\nEnter the highest year range: ";
 			}
+			
+			getline(cin, input);
 
-			for(int i = 0; i < yearString.length(); i++){
-				if(!isdigit(yearString[i])){
-					yearString = "-1";
-					break;
-				} 
+			if(input.length() == 0){
+				input = "-1";
+			} else{
+				for(int i = 0; i < input.length(); i++){
+					if(!isdigit(input[i])){
+						input = "-1";
+						break;
+					} 
+				}
 			}
 		} 
 	}
-
-	// void validateYearInput(int& year){
-	// 	while(cin.fail() || year < 1000 || year > 2021){ 
-	// 		if(cin.fail()){
-	// 			cin.clear(); // put us back in 'normal' operation mode
- //    			cin.ignore(100, '\n');  // clear up to 100 characters out of the buffer, or until a '\n' character is removed
-	// 		}
-	// 		cout << "Invalid release year entered, please try again.\nEnter Year of Release: ";
-	// 		cin >> year;
-	// 	}
-	// }
 
 public:
 
@@ -223,9 +220,8 @@ public:
 
 		cout << "Enter Year of Release: ";
 		getline(cin, yearString);
-		// cin >> year; 
 		// validate input
-		validateYearInput(yearString);
+		validateNumInput(yearString, 1000, 2021, "year");
 		year = stoi(yearString);
 
 
@@ -237,7 +233,7 @@ public:
 			Song newSong(songName, album, artist, year);
 			addData(newSong);
 
-			cout << songName << " by " << artist << " was successfully added!\n";
+			cout << "\n" << songName << " by " << artist << " was successfully added!\n";
 		}
 	}
 
@@ -267,16 +263,8 @@ public:
 			searchPrompt = "year";
 		}
 
-		// !!!!!!! CONVERT YEAR TO GETLINE !!!!!!!!!
 		cout << "Enter your " + searchPrompt + " search request: ";
 		getline(cin, searchRequest);
-
-
-		// if(findChoice != 4){
-		// 	getline(cin, searchRequest);
-		// } else{
-		// 	cin >> yearRequest;
-		// }
 		
 		if(findChoice == 1){
 			validateSongInput(searchRequest);
@@ -318,7 +306,7 @@ public:
 				}
 			}
 		} else if(findChoice == 4){
-			validateYearInput(searchRequest);
+			validateNumInput(searchRequest, 1000, 2021, "year");
 			for(int i = 0; i < sz; i++){
 				if(data[i].get_year() == stoi(searchRequest)){
 					if(results == 0){
@@ -330,7 +318,6 @@ public:
 					results++;
 				}
 			}
-			// searchRequest = to_string(yearRequest);
 		}
 
 		if(results == 0){
@@ -345,7 +332,7 @@ public:
 			cout << "found where the " << searchPrompt << " matches " << searchRequest << ".\n";
 
 			if(deleteRecord){
-				int choice;
+				string choice;
 				cout << "\nDo you want to delete ";
 				if(results == 1){
 					cout << "this result ";
@@ -356,19 +343,10 @@ public:
 					 << "1. Yes\n"
 					 << "2. No\n"
 					 << "Please enter the number of your choice: ";
-				cin >> choice;
-				while(cin.fail() || choice < 1 || choice > 2){
-					if(cin.fail()){
-						cin.clear(); // put us back in 'normal' operation mode
-		    			cin.ignore(100, '\n');  // clear up to 100 characters out of the buffer, or until a '\n' character is removed
-					}
-					cout << "Invalid choice.\n" 
-						 << "Please enter the number of your choice: ";
-					cin >> choice;
-				}
-				cin.ignore(1,'\n');
+				getline(cin, choice);
+				validateNumInput(choice, 1, 2, "choice");
 
-				if(choice == 1){
+				if(stoi(choice) == 1){
 					deleteExact(findChoice, searchRequest);
 				}
 			}
@@ -443,7 +421,7 @@ public:
 			cout << "found where the " << searchPrompt << " contains " << searchRequest << ".\n";
 
 			if(deleteRecord){
-				int choice;
+				string choice;
 				cout << "\nDo you want to delete ";
 				if(results == 1){
 					cout << "this result ";
@@ -454,19 +432,10 @@ public:
 					 << "1. Yes\n"
 					 << "2. No\n"
 					 << "Please enter the number of your choice: ";
-				cin >> choice;
-				while(cin.fail() || choice < 1 || choice > 2){
-					if(cin.fail()){
-						cin.clear(); // put us back in 'normal' operation mode
-		    			cin.ignore(100, '\n');  // clear up to 100 characters out of the buffer, or until a '\n' character is removed
-					}
-					cout << "Invalid choice.\n" 
-						 << "Please enter the number of your choice: ";
-					cin >> choice;
-				}
-				cin.ignore(1,'\n');
+				getline(cin, choice);
+				validateNumInput(choice, 1, 2, "choice");
 
-				if(choice == 1){
+				if(stoi(choice) == 1){
 					deleteSubstring(findChoice, searchRequest);
 				}
 			}
@@ -482,17 +451,12 @@ public:
 		while(yearLow > yearHigh){
 			cout << "Enter the lowest year range: ";
 			getline(cin, yearInput);
-			// cin >> yearLow;
-			validateYearInput(yearInput);
+			validateNumInput(yearInput, 1000, 2021, "yearLow");
 			yearLow = stoi(yearInput);
 			cout << "Enter the highest year range: ";
 			getline(cin, yearInput);
-			// cin >> yearHigh;
-			validateYearInput(yearInput);
+			validateNumInput(yearInput, yearLow, 2021, "yearHigh");
 			yearHigh = stoi(yearInput);
-			if(yearLow > yearHigh){
-				cout << "Invalid range. Please input lowest year first.\n";
-			}
 		}
 
 		for(int i = 0; i < sz; i++){
@@ -519,7 +483,7 @@ public:
 			cout << "found where the year is in the range of " << to_string(yearLow) + " to " + to_string(yearHigh) + ".\n";
 
 			if(deleteRecord){
-				int choice;
+				string choice;
 				cout << "\nDo you want to delete ";
 				if(results == 1){
 					cout << "this result ";
@@ -530,19 +494,10 @@ public:
 					 << "1. Yes\n"
 					 << "2. No\n"
 					 << "Please enter the number of your choice: ";
-				cin >> choice;
-				while(cin.fail() || choice < 1 || choice > 2){
-					if(cin.fail()){
-						cin.clear(); // put us back in 'normal' operation mode
-		    			cin.ignore(100, '\n');  // clear up to 100 characters out of the buffer, or until a '\n' character is removed
-					}
-					cout << "Invalid choice.\n" 
-						 << "Please enter the number of your choice: ";
-					cin >> choice;
-				}
-				cin.ignore(1,'\n');
+				getline(cin, choice);
+				validateNumInput(choice, 1, 2, "choice");
 
-				if(choice == 1){
+				if(stoi(choice) == 1){
 					deleteRange(yearLow, yearHigh);
 				}
 			}
@@ -681,26 +636,14 @@ public:
 	}
 
 	void songRec(const int& choice){
-
 		int numberInput;
 
 		if(choice == 1){
+			string input;
 			cout << "Enter a number from 0 to " + to_string(sz-1) + ": ";
-			cin >> numberInput;
-
-			// https://www.learncpp.com/cpp-tutorial/stdcin-and-handling-invalid-input/
-			while(cin.fail() || numberInput < 0 || numberInput > sz-1){
-				if(cin.fail()){
-					cin.clear(); // put us back in 'normal' operation mode
-	    			cin.ignore(100, '\n');  // clear up to 100 characters out of the buffer, or until a '\n' character is removed
-				}
-				cout << "Invalid choice.\n" 
-					 << "Enter a number from 0 to " + to_string(sz) + ": ";
-				cin >> numberInput;
-			}
-
-			// https://stackoverflow.com/questions/10311382/c-issue-getline-skips-first-input
-			cin.ignore(1,'\n');
+			getline(cin, input);
+			validateNumInput(input, 0, sz-1, "rec");
+			numberInput = stoi(input);
 		} else{
 			// get a random index number
 			numberInput = rand() % sz;
@@ -708,10 +651,10 @@ public:
 
 		cout << "\nSelected Song\n"
 			 << "-------------\n";
-		printRecord(get(numberInput));
+		printRecord(get_song(numberInput));
 	}
 
-	Song get(const int& i) const{
+	Song get_song(const int& i) const{
 		if(i < 0 || i > sz-1){
 			// invalid index
 			cout << "The requested index location is outside the bounds of the array.\n";
