@@ -34,6 +34,27 @@
 
 using namespace std;
 
+void findSong(Database& database, Menu& menu, const bool& isDelete){
+	// display find song sub menu
+	menu.printFindSongMenu(isDelete);
+	int findChoice = menu.get_menuChoice();
+	while(findChoice != 0){
+		menu.printSearchMenu();
+		if(menu.get_menuChoice() == 1){
+			database.searchExact(findChoice, isDelete);
+		} else{
+			if(menu.get_menuState() == 2){
+				database.searchSubstring(findChoice, isDelete);
+			} else{
+				database.searchRange(isDelete);
+			}
+		}
+		// display find song sub menu
+		menu.printFindSongMenu(isDelete);
+		findChoice = menu.get_menuChoice();
+	}
+}
+
 int main(){
 	Database database("database.txt");
 	// Database database("empty_db.txt");
@@ -53,24 +74,7 @@ int main(){
 					 << "Please add some songs before finding a song in the database.\n";
 				menu.printMainMenu();
 			} else{
-				// display find song sub menu
-				menu.printFindSongMenu(false);
-				int findChoice = menu.get_menuChoice();
-				while(findChoice != 0){
-					menu.printSearchMenu();
-					if(menu.get_menuChoice() == 1){
-						database.searchExact(findChoice, false);
-					} else{
-						if(menu.get_menuState() == 2){
-							database.searchSubstring(findChoice, false);
-						} else{
-							database.searchRange(false);
-						}
-					}
-					// display find song sub menu
-					menu.printFindSongMenu(false);
-					findChoice = menu.get_menuChoice();
-				}
+				findSong(database, menu, false);
 			}
 		} else if(menu.get_menuChoice() == 3){
 			if(database.size() == 0){
@@ -78,26 +82,7 @@ int main(){
 					 << "Please add some songs before deleting a song from the database.\n";
 				menu.printMainMenu();
 			} else{
-				// display find song sub menu
-				menu.printFindSongMenu(true);
-				int findChoice = menu.get_menuChoice();
-				while(findChoice != 0){
-					menu.printSearchMenu();
-					if(menu.get_menuChoice() == 1){
-						if(menu.get_menuChoice() == 1){
-							database.searchExact(findChoice, true);
-						}
-					} else{
-						if(menu.get_menuState() == 2){
-							database.searchSubstring(findChoice, true);
-						} else{
-							database.searchRange(true);
-						}
-					}
-					// display find song sub menu
-					menu.printFindSongMenu(true);
-					findChoice = menu.get_menuChoice();
-				}
+				findSong(database, menu, true);
 			}
 		} else if(menu.get_menuChoice() == 4){
 			if(database.size() == 0){

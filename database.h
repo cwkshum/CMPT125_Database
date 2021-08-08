@@ -678,6 +678,7 @@ public:
 			// file error
 			cout << "There was an error saving the database to textfile.\n";
 		} 
+		cout << "\nSuccessfully saved the records to " << fname << "! Closing the database.\n";
 	}
 
 	// Destructor

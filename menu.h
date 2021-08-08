@@ -73,22 +73,6 @@ public:
 		return menuState;
 	}
 
-	// void set_menuState(const int& i){
-	// 	if(i < 0 || i > 1){
-	// 		cout << "Invalid menu state.";
-	// 	} 
-
-	// 	menuState = i;
-	// }
-
-	// void displayMenu(){
-	// 	if(menuState == 0){
-	// 		printMainMenu();
-	// 	} else if(menuState == 1){
-
-	// 	}
-	// }
-
 	void printMainMenu(){
 		menuState = 0;
 		cout << "\nMain Menu\n"
