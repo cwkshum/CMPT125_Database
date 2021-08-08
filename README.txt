@@ -3,7 +3,7 @@ CMPT 125 Assignment 5
 
 Names of Team Members
 ---------------------
-Carissa Shum, cws8@sfu.ca, 301359502
+Carissa Shum, cws8@sfu.ca, 301359502 (done individually)
 
 
 Limitations
@@ -27,16 +27,16 @@ program to generate a random index location and display the
 corresponding song to the user.
 
 2. A clear database feature was implemented where the program 
-will all the records that are being stored in the array and the 
-user can decide if they want to clear the database, which will
-empty the array. 
+will remove all the records that are being stored in the array  
+and the user can decide if they want to clear the database, which 
+will empty the array. 
 
 
 Implementation Notes
 --------------------
-1. The program is case insensitive, thus when searching in
-for a match in the database, if the user inputs the song name 
-in all capital letters but the song name in the database is in 
+1. The program is case insensitive, thus when searching for
+a match in the database, if the user inputs the song name in
+all capital letters but the song name in the database is in 
 a mix of lower and uppercase letters, it will still register that
 the search input and the record in the database are the same.
 
@@ -46,3 +46,6 @@ in which Bon Iver is the only artist of the song. It will not return
 songs in which there are multiple artists that share the song with
 Bon Iver. For instance, if Bon Iver is featured on a song with Taylor
 Swift, that song will not be considered an exact match. 
+
+3. The lowest acceptable release year for the program is the year 1000, 
+and the highest acceptable release year is 2021 (the current year).

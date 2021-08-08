@@ -211,7 +211,8 @@ public:
 			textFile.close();
 		} else{
 			// file error
-			cout << "There was an error opening and reading the database textfile.\n";
+			cout << "There was an error opening and reading "
+				 << fname << ".\n";
 		} 
 
 		// use current time as seed for random generator
@@ -296,7 +297,8 @@ public:
 		// check if the song exists in the database
 		if(existInDatabase(songName, album, artist, year)){
 			// don't add to database
-			cout << songName << " by " << artist << " already exists in the database.\n";
+			cout << "\n" << songName << " by " << artist 
+				 << " already exists in the database.\n";
 		} else {
 			// create a song instance
 			Song newSong(songName, album, artist, year);
@@ -584,7 +586,7 @@ public:
 		}
 
 		// print confirmation message
-		cout << "All records of " << searchRequest 
+		cout << "\nAll records of " << searchRequest 
 			 << " has been successfully removed from the database!\n";
 	}
 
@@ -599,7 +601,7 @@ public:
 		}
 
 		// print confirmation message
-		cout << "All records with release years from " << yearLow << " to " << yearHigh 
+		cout << "\nAll records with release years from " << yearLow << " to " << yearHigh 
 			 << " has been successfully removed from the database!\n";
 	}
 	
