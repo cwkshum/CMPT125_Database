@@ -111,6 +111,18 @@ private:
 			}
 		} 
 	}
+
+	string requestedField(const int& choice) const{
+		if(choice == 1){
+			return "song";
+		} else if(choice == 2){
+			return "album";
+		} else if(choice == 3){
+			return "artist";
+		} else {
+			return "year";
+		}
+	}
 public:
 	// Empty Default Constructor
 	Database()
@@ -262,18 +274,9 @@ public:
 	}
 
 	void searchExact(const int& findChoice, const bool& deleteRecord){
-		string searchPrompt, searchRequest;
+		string searchPrompt = requestedField(findChoice);
+		string searchRequest;
 		int results = 0;
-
-		if(findChoice == 1){
-			searchPrompt = "song";
-		} else if(findChoice == 2){
-			searchPrompt = "album";
-		} else if(findChoice == 3){
-			searchPrompt = "artist";
-		} else if(findChoice == 4){
-			searchPrompt = "year";
-		}
 
 		cout << "Enter your " + searchPrompt + " search request: ";
 		getline(cin, searchRequest);
@@ -333,7 +336,7 @@ public:
 		}
 
 		if(results == 0){
-			cout << "\nNo " + searchPrompt + " results found matching " + searchRequest + ".\n";
+			cout << "\nNo " << searchPrompt << " results found matching " << searchRequest << ".\n";
 		} else{
 			cout << to_string(results);
 			if(results == 1){
@@ -350,15 +353,9 @@ public:
 	}
 
 	void searchSubstring(const int& findChoice, const bool& deleteRecord){
-		string searchPrompt, searchRequest;
+		string searchPrompt = requestedField(findChoice);
+		string searchRequest;
 		int results = 0;
-		if(findChoice == 1){
-			searchPrompt = "song";
-		} else if(findChoice == 2){
-			searchPrompt = "album";
-		} else if(findChoice == 3){
-			searchPrompt = "artist";
-		} 
 
 		cout << "Enter your " + searchPrompt + " substring search request: ";
 		getline(cin, searchRequest);
@@ -570,7 +567,8 @@ public:
 
 	// https://publish.obsidian.md/cmpt125/The+STL+and+generic+programming
 	void sortRecords(const int& findChoice, const int& order) const{
-		string recordRequest, orderRequest;
+		string recordRequest = requestedField(findChoice);
+		string orderRequest;
 		Song* sortedData = new Song[cap];
 		for(int i = 0; i < sz; i++){
 			sortedData[i] = data[i];
@@ -578,13 +576,10 @@ public:
 
 		if(findChoice != 4){
 			if(findChoice == 1){
-				recordRequest = "song";
 				std::sort(sortedData, sortedData + sz, byNameThenAlbum);
 			} else if(findChoice == 2){
-				recordRequest = "album";
 				std::sort(sortedData, sortedData + sz, byAlbumThenName);
 			} else if(findChoice == 3){
-				recordRequest = "artist";
 				std::sort(sortedData, sortedData + sz, byArtistThenName);
 			}
 
@@ -595,7 +590,6 @@ public:
 				std::reverse(sortedData, sortedData + sz);
 			}
 		} else if(findChoice == 4){
-			recordRequest = "year";
 			std::sort(sortedData, sortedData + sz, byYearThenName);
 
 			if(order == 1){
@@ -678,7 +672,7 @@ public:
 			// file error
 			cout << "There was an error saving the database to textfile.\n";
 		} 
-		cout << "\nSuccessfully saved the records to " << fname << "! Closing the database.\n";
+		cout << "\nSuccessfully saved all records to " << fname << "! Closing the database.\n";
 	}
 
 	// Destructor

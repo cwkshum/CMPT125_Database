@@ -55,69 +55,72 @@ void findSong(Database& database, Menu& menu, const bool& isDelete){
 	}
 }
 
+void databaseProgram(Database& database, Menu& menu){
+	if(menu.get_menuChoice() == 0){
+		// display main menu
+		menu.printMainMenu();
+	} else if(menu.get_menuChoice() == 1){
+		database.addSong();
+		// display main menu
+		menu.printMainMenu();
+	} else if(menu.get_menuChoice() == 2){
+		if(database.size() == 0){
+			cout << "\nSorry, the database appears to be empty! "
+				 << "Please add some songs before finding a song in the database.\n";
+			menu.printMainMenu();
+		} else{
+			findSong(database, menu, false);
+		}
+	} else if(menu.get_menuChoice() == 3){
+		if(database.size() == 0){
+			cout << "\nSorry, the database appears to be empty! "
+				 << "Please add some songs before deleting a song from the database.\n";
+			menu.printMainMenu();
+		} else{
+			findSong(database, menu, true);
+		}
+	} else if(menu.get_menuChoice() == 4){
+		if(database.size() == 0){
+			cout << "\nSorry, the database appears to be empty! "
+				 << "Please add some songs before requesting to list the songs in the database.\n";
+			menu.printMainMenu();
+		} else{
+			menu.printListMenu();
+			int findChoice = menu.get_menuChoice();
+			while(menu.get_menuChoice() != 0){
+				menu.printOrderMenu();
+				database.sortRecords(findChoice, menu.get_menuChoice());
+				menu.printListMenu();
+				findChoice = menu.get_menuChoice();
+			}
+		}
+	} else if(menu.get_menuChoice() == 5){
+		if(database.size() == 0){
+			cout << "\nSorry, the database appears to be empty! "
+				 << "Please add some songs before getting a song recommendation.\n";
+			menu.printMainMenu();
+		} else{
+			menu.printRecMenu();
+			while(menu.get_menuChoice() != 0){
+				database.songRec(menu.get_menuChoice());
+				menu.printRecMenu();
+			}
+		}
+	} else if(menu.get_menuChoice() == 6){
+		if(database.size() == 0){
+			cout << "\nThe database is currently empty!\n";
+		} else{
+			database.clearData();
+		}
+		menu.printMainMenu();
+	}
+}
+
 int main(){
 	Database database("database.txt");
-	// Database database("empty_db.txt");
 	Menu menu;
 
 	while(menu.get_menuChoice() != 7){
-		if(menu.get_menuChoice() == 0){
-			// display main menu
-			menu.printMainMenu();
-		} else if(menu.get_menuChoice() == 1){
-			database.addSong();
-			// display main menu
-			menu.printMainMenu();
-		} else if(menu.get_menuChoice() == 2){
-			if(database.size() == 0){
-				cout << "\nSorry, the database appears to be empty! "
-					 << "Please add some songs before finding a song in the database.\n";
-				menu.printMainMenu();
-			} else{
-				findSong(database, menu, false);
-			}
-		} else if(menu.get_menuChoice() == 3){
-			if(database.size() == 0){
-				cout << "\nSorry, the database appears to be empty! "
-					 << "Please add some songs before deleting a song from the database.\n";
-				menu.printMainMenu();
-			} else{
-				findSong(database, menu, true);
-			}
-		} else if(menu.get_menuChoice() == 4){
-			if(database.size() == 0){
-				cout << "\nSorry, the database appears to be empty! "
-					 << "Please add some songs before requesting to list the songs in the database.\n";
-				menu.printMainMenu();
-			} else{
-				menu.printListMenu();
-				int findChoice = menu.get_menuChoice();
-				while(menu.get_menuChoice() != 0){
-					menu.printOrderMenu();
-					database.sortRecords(findChoice, menu.get_menuChoice());
-					menu.printListMenu();
-					findChoice = menu.get_menuChoice();
-				}
-			}
-		} else if(menu.get_menuChoice() == 5){
-			if(database.size() == 0){
-				cout << "\nSorry, the database appears to be empty! "
-					 << "Please add some songs before getting a song recommendation.\n";
-				menu.printMainMenu();
-			} else{
-				menu.printRecMenu();
-				while(menu.get_menuChoice() != 0){
-					database.songRec(menu.get_menuChoice());
-					menu.printRecMenu();
-				}
-			}
-		} else if(menu.get_menuChoice() == 6){
-			if(database.size() == 0){
-				cout << "\nThe database is currently empty!\n";
-			} else{
-				database.clearData();
-			}
-			menu.printMainMenu();
-		}
+		databaseProgram(database, menu);
 	}
 }
