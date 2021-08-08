@@ -98,8 +98,9 @@ public:
 			 << "3: Delete a Song\n"
 			 << "4: List Songs\n"
 			 << "5: Song Recommendation\n"
-			 << "6: Quit\n\n";
-		promptChoice(1, 6);
+			 << "6: Clear Database\n"
+			 << "7: Quit\n\n";
+		promptChoice(1, 7);
 	}
 
 	void printFindSongMenu(const bool& deleteRecord){

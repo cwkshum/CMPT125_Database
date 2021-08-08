@@ -638,6 +638,25 @@ public:
 		printRecord(get_song(numberInput));
 	}
 
+	void clearData(){
+		cout << "\nClear Database\n"
+			 << "--------------\n";
+		for(int i = 0; i < sz; i++){
+			printRecord(get_song(i));
+		}
+
+		if(deleteResults(sz)){
+			cap = 10;
+			Song* emptyData = new Song[10];
+			sz = 0;
+			delete[] data;
+			data = emptyData;
+			cout << "\nDatabase successfully cleared!\n";
+		} else {
+			cout << "\nDatabase was not cleared.\n";
+		}
+	}
+
 	// https://www.cplusplus.com/doc/tutorial/files/
 	void saveToFile(const string& fname) const{
 		// write to file from given file name

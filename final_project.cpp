@@ -39,7 +39,7 @@ int main(){
 	// Database database("empty_db.txt");
 	Menu menu;
 
-	while(menu.get_menuChoice() != 6){
+	while(menu.get_menuChoice() != 7){
 		if(menu.get_menuChoice() == 0){
 			// display main menu
 			menu.printMainMenu();
@@ -126,6 +126,13 @@ int main(){
 					menu.printRecMenu();
 				}
 			}
+		} else if(menu.get_menuChoice() == 6){
+			if(database.size() == 0){
+				cout << "\nThe database is currently empty!\n";
+			} else{
+				database.clearData();
+			}
+			menu.printMainMenu();
 		}
 	}
 }
