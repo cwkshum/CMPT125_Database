@@ -26,12 +26,12 @@ using namespace std;
 
 class Song{
 private: 
+	// fields of the individual song record
 	string name;
 	string album;
 	string artist;
 	int year;
 public: 
-
 	// Empty Default Constructor
 	Song()
 	{}
@@ -42,18 +42,22 @@ public:
 	{}
 
 	string get_name() const{
+		// return song name
 		return name;
 	}
 
 	string get_album() const{
+		// return album name
 		return album;
 	}
 
 	string get_artist() const{
+		// return artist name
 		return artist;
 	}
 
 	int get_year() const{
+		// return release year
 		return year;
 	}
 

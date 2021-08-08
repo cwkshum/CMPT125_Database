@@ -20,34 +20,49 @@
 // In addition, I have not shared this work with anyone else, and I have not
 // seen solutions from other students, tutors, websites, books, etc.
 //
+// 
+// References
+// ----------
+// 1. Referenced CMPT 125 course notes on how to implement std::sort()  
+// and std::reverse() with an array of objects
+// - https://publish.obsidian.md/cmpt125/The+STL+and+generic+programming
+// 2. Method for turning strings into all lowercase was learned in CMPT 127
+//
 /////////////////////////////////////////////////////////////////////////
 
 string toLowerCase(string originalString){
+	// go through the passed in string
 	for(int i = 0; i < originalString.size(); i++){
+		// if any characters are uppercase letters, turn it into lowercase
 		if(originalString[i] >= 'A' && originalString[i] <= 'Z'){
 			originalString[i] += 32;
 		}
 	}
+	// return the lowercase string
 	return originalString; 
 }
 
-// https://publish.obsidian.md/cmpt125/The+STL+and+generic+programming
+// song name comparision for std::sort
 bool bySongName(const Song& songA, const Song& songB){
 	return toLowerCase(songA.get_name()) <= toLowerCase(songB.get_name());
 }
 
+// album comparision for std::sort
 bool byAlbum(const Song& songA, const Song& songB){
 	return toLowerCase(songA.get_album()) <= toLowerCase(songB.get_album());
 }
 
+// artist comparision for std::sort
 bool byArtist(const Song& songA, const Song& songB){
 	return toLowerCase(songA.get_artist()) <= toLowerCase(songB.get_artist());
 }
 
+// year comparision for std::sort
 bool byYear(const Song& songA, const Song& songB){
 	return songA.get_year() <= songB.get_year();
 }
 
+// compares the song name and then the album if the names are the same
 bool byNameThenAlbum(const Song& songA, const Song& songB){
 	if(toLowerCase(songA.get_name()) == toLowerCase(songB.get_name())){
 		return byAlbum(songA, songB);
@@ -56,6 +71,7 @@ bool byNameThenAlbum(const Song& songA, const Song& songB){
 	}
 }
 
+// compares the album and then the song name if the albums are the same
 bool byAlbumThenName(const Song& songA, const Song& songB){
 	if(toLowerCase(songA.get_album()) == toLowerCase(songB.get_album())){
 		return bySongName(songA, songB);
@@ -64,6 +80,7 @@ bool byAlbumThenName(const Song& songA, const Song& songB){
 	}
 }
 
+// compares the artist and then the song name is the artist is the same
 bool byArtistThenName(const Song& songA, const Song& songB){
 	if(toLowerCase(songA.get_album()) == toLowerCase(songB.get_album())){
 		return bySongName(songA, songB);
@@ -72,6 +89,7 @@ bool byArtistThenName(const Song& songA, const Song& songB){
 	}
 }
 
+// comapres the year and then the song name if the year is the same
 bool byYearThenName(const Song& songA, const Song& songB){
 	if(songA.get_year() == songB.get_year()){
 		return bySongName(songA, songB);
